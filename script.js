@@ -26,7 +26,29 @@ const TYPE_CHART = {
     fairy:    { weak: ["poison", "steel"], resist: ["fighting", "bug", "dark"], immune: ["dragon"] }
   };
 const teamContainer = document.getElementById("team");
+async function fetchLocationEncounters(url) {
+  const response = await fetch(url);
+  const data = await response.json();
 
+  return data
+    .map(encounter => {
+      const bwDetails = encounter.version_details.find(v =>
+        v.version.name === "black" || v.version.name === "white"
+      );
+
+      if (!bwDetails) return null;
+
+      return {
+        location: encounter.location_area.name
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, l => l.toUpperCase()),
+        minLevel: bwDetails.encounter_details[0]?.min_level,
+        maxLevel: bwDetails.encounter_details[0]?.max_level,
+        method: bwDetails.encounter_details[0]?.method.name
+      };
+    })
+    .filter(Boolean);
+}
 function calculatePokemonEffectiveness(types) {
     const result = {};
   
@@ -93,9 +115,13 @@ async function loadPokemonData() {
         id,
         name: data.name,
         sprite: data.sprites.front_default,
-        types: data.types.map(t => t.type.name)
+        types: data.types.map(t => t.type.name),
+        encountersUrl: data.location_area_encounters
       });
     }
+
+    
+    
   
     // Save to cache
     localStorage.setItem(CACHE_KEY, JSON.stringify(pokemonList));
@@ -140,13 +166,16 @@ function updateWeaknessChart() {
   }
   
 
-function createTeamSlots(pokemonList) {
+  function createTeamSlots(pokemonList) {
     for (let i = 1; i <= 6; i++) {
       const slot = document.createElement("div");
       slot.className = "slot";
   
+      const encounterContainer = document.createElement("div");
+      encounterContainer.className = "encounters";
+  
       const label = document.createElement("label");
-      label.textContent = `Slot ${i}`;
+      label.textContent = `Team Member ${i}`;
   
       const select = document.createElement("select");
       const img = document.createElement("img");
@@ -157,7 +186,6 @@ function createTeamSlots(pokemonList) {
       const typeContainer = document.createElement("div");
       typeContainer.className = "types";
   
-      // Default option
       const defaultOption = document.createElement("option");
       defaultOption.textContent = "---";
       select.appendChild(defaultOption);
@@ -169,12 +197,13 @@ function createTeamSlots(pokemonList) {
         select.appendChild(option);
       });
   
-      select.addEventListener("change", () => {
+      select.addEventListener("change", async () => {
         const selected = pokemonList.find(p => p.name === select.value);
   
         if (!selected) {
           img.src = "";
           typeContainer.innerHTML = "";
+          encounterContainer.innerHTML = "";
           team[i - 1] = null;
           updateWeaknessChart();
           return;
@@ -189,15 +218,34 @@ function createTeamSlots(pokemonList) {
           span.className = `type ${type}`;
           typeContainer.appendChild(span);
         });
-
+  
         team[i - 1] = selected;
         updateWeaknessChart();
+  
+        encounterContainer.innerHTML = "Loading encounters...";
+  
+        if (!selected.encounters) {
+          selected.encounters = await fetchLocationEncounters(selected.encountersUrl);
+        }
+  
+        encounterContainer.innerHTML = "";
+  
+        if (selected.encounters.length === 0) {
+          encounterContainer.textContent = "No wild encounters in Black/White";
+        } else {
+          selected.encounters.forEach(e => {
+            const div = document.createElement("div");
+            div.className = "encounter-row";
+            div.textContent = `${e.location} — Lv ${e.minLevel}-${e.maxLevel} (${e.method})`;
+            encounterContainer.appendChild(div);
+          });
+        }
       });
   
-      slot.append(label, select, img, typeContainer);
+      slot.append(label, select, img, typeContainer, encounterContainer);
       teamContainer.appendChild(slot);
     }
-}
+  }
   async function init() {
     const pokemonList = await loadPokemonData();
     createTeamSlots(pokemonList);
