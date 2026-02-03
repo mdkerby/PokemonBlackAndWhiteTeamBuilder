@@ -1,6 +1,27 @@
+@font-face {
+  font-family: "PokemonClassic";
+  src: url("PokemonClassic.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+#pixel-text-header {
+  font-family: "PokemonClassic", monospace;
+  font-size: 20px;          /* whole number only */
+  letter-spacing: 1px;
+  line-height: 1;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  text-rendering: optimizeSpeed;
+}
+
+.pixel-text {
+  font-family: "Press Start 2P", monospace;
+  font-size: 16px;
+}
 body {
-    font-family: Arial, sans-serif;
-    background: #f0d6d6;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    /* font-family: Inter, sans-serif; */
+    background: #a89999;
     margin: 0;
     padding: 20px;
   }
@@ -11,9 +32,9 @@ body {
   
   .team {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 16px;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
   }
   
@@ -86,11 +107,54 @@ body {
     border-radius: 6px;
     align-items: center;
   }
-    .trainer {
-    width: 55px;   /* width of one sprite */
-    height: 80px;  /* height of one sprite */
-    background-image: url('N.png'); /* your sprite sheet */
-    image-rendering: pixelated; /* optional for crisp pixels */
+  .N{
+      width: 75px;   /* width of one sprite */
+    height: 80px;
+    background-image: url('N.png');
+    image-rendering: pixelated;
   }
+  .Ghetsis{
+      width: 75px;   /* width of one sprite */
+    height: 80px;
+    background-image: url('N.png');
+    image-rendering: pixelated;
+  }
+  #ghetsisTrainer{
+    width: 75px;   /* width of one sprite */
+    height: 80px;
+    image-rendering: pixelated;
+  }
+  #hilbertTrainer{
+    image-rendering: pixelated;
+    width: 50px;   /* width of one sprite */
+    height: 75px;
+    background-image: url('Hilbert.png');
+  }
+  #hildaTrainer{
+    image-rendering: pixelated;
+    width: 45px;   /* width of one sprite */
+    height: 80px;
+    background-image: url('Hilda.png');
+    float: right;
+    margin-left: 15px; 
+  }
+  #nTrainer{
+    image-rendering: pixelated;
+    width: 55px;   /* width of one sprite */
+    height: 80px;
+    float: right;
+    margin-left: 15px; 
+  }
+.trainer {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  width: 100%;
+}
+
+.middle-text {
+  text-align: center;
+}
+
 
   

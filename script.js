@@ -110,10 +110,10 @@ async function loadPokemonData() {
     for (let id = GEN5_START; id <= GEN5_END; id++) {
       const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
       const data = await response.json();
-  
+      data.name = data.name.charAt(0).toUpperCase()+ data.name.slice(1);
       pokemonList.push({
         id,
-        name: data.name,
+        name: data.name.split("-")[0],
         sprite: data.sprites.front_default,
         types: data.types.map(t => t.type.name),
         encountersUrl: data.location_area_encounters
@@ -233,10 +233,15 @@ function updateWeaknessChart() {
         if (selected.encounters.length === 0) {
           encounterContainer.textContent = "No wild encounters in Black/White";
         } else {
-          selected.encounters.forEach(e => {
+          encounterContainer.textContent="First 5 encounters:";
+          selected.encounters
+            .slice(0,5)
+            
+            .forEach(e => {
+            
             const div = document.createElement("div");
             div.className = "encounter-row";
-            div.textContent = `${e.location} — Lv ${e.minLevel}-${e.maxLevel} (${e.method})`;
+            div.textContent = `${e.location} — Lv ${e.minLevel} (${e.method})`;
             encounterContainer.appendChild(div);
           });
         }
