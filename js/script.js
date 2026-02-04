@@ -242,8 +242,14 @@ function updateWeaknessChart() {
     }
   }
   async function init() {
+    const loading = document.getElementById("loading");
+
+  try {
     const pokemonList = await loadPokemonData();
     createTeamSlots(pokemonList);
+  } finally {
+    loading.style.display = "none";
+  }
   }
   
   function clearCache() {
