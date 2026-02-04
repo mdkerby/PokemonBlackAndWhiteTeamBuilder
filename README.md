@@ -1,0 +1,1 @@
+A web-based team builder designed specifically for Pokémon Black & White (Generation 5). This tool lets you build a full team of six Pokémon while instantly visualizing type weaknesses, resistances, and immunities, plus seeing where each Pokémon can be encountered in-game.
